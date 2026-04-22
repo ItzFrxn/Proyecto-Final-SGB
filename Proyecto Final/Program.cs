@@ -10,6 +10,7 @@ namespace Proyecto_Final
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Welcome to UAT-Pay!");
         }
     }
 }

@@ -43,6 +43,7 @@ namespace Proyecto_Final
                     string rType = Console.ReadLine();
                     break;
             }
+            Console.WriteLine("Gracias por usar UAT-Pay!");
         }
     }
 }

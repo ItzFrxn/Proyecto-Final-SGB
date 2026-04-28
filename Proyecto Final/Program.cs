@@ -11,9 +11,6 @@ namespace Proyecto_Final
         static void Main(string[] args)
         {
             Console.WriteLine("Holaaa");
-            //Holaaa
-            //SMWDMW
-            /*
             Console.WriteLine("=======================");
             Console.WriteLine("\tUATPay");
             Console.WriteLine("=======================");
@@ -48,7 +45,7 @@ namespace Proyecto_Final
                     break;
             }
             Console.WriteLine("Gracias por usar UAT-Pay!");
-            */
+            
         }
     }
 }

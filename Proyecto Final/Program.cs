@@ -11,7 +11,7 @@ namespace Proyecto_Final
         static void Main(string[] args)
         {
             Console.WriteLine("Holaaa");
-            Console.Write("Bienvenido a UAT-Pay, el sistema de pagos de la Universidad Autónoma de Tamaulipas.\n");c
+            //Holaaa
             /*
             Console.WriteLine("=======================");
             Console.WriteLine("\tUATPay");

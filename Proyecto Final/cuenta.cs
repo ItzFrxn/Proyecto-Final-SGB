@@ -10,12 +10,12 @@ namespace Proyecto_Final
     // CLASE PRINCIPAL - CUENTA
     public abstract class Cuenta
     {
-        private int numRegistro = new Random().Next(1000, 9999);
+        private int numRegistro;
         private string nombres;
         private string apellidos;
         private int edad;
-        private string fechaApt = DateTime.Now.ToString("yyyy-MM-dd");
-        private double saldo = 0;
+        private string fechaApt;
+        private double saldo;
         private string tipo;
 
         // Propiedades
@@ -58,10 +58,34 @@ namespace Proyecto_Final
         // Constructores
         public Cuenta(string nombre, string apellido, int edad, string tipo)
         {
+            this.numRegistro = new Random().Next(1000, 9999);
+            this.nombres = nombre;
+            this.apellidos = apellido;
+            this.edad = edad;
+            this.tipo = tipo;
+            this.saldo = 0;
+            this.fechaApt = DateTime.Now.ToString("yyyy-MM-dd");
+        }
 
+        public void Depositar(double cantidad)
+        {
+            saldo += cantidad;
+        }
+
+        public virtual void Retirar(double cantidad)
+        {
+            if (cantidad <= saldo)
+            {
+                saldo -= cantidad;
+            }
+            else
+            {
+                Console.WriteLine("Saldo insuficiente.");
+            }
         }
 
     }
+
     // CLASE  SECUNDARIAS - CHEQUERA
     public class Chequera : Cuenta
     {
@@ -69,6 +93,7 @@ namespace Proyecto_Final
         {
         }
     }
+
     // CLASE - CREDITO
     public class Credito : Cuenta
     {
@@ -77,7 +102,13 @@ namespace Proyecto_Final
         public Credito(string nombre, string apellido, int edad) : base(nombre, apellido, edad, "Credito")
         {
         }
+        public override void Retirar(double cantidad)
+        {
+           Saldo -= cantidad;
+            Console.WriteLine($"Has retirado {cantidad} de tu cuenta de crédito. Saldo actual: {Saldo}");
+        }
     }
+
     // CLASE - INVERSION
     public class Inversion : Cuenta
     {
@@ -87,24 +118,5 @@ namespace Proyecto_Final
         public Inversion(string nombre, string apellido, int edad) : base(nombre, apellido, edad, "Inversion")
         {
         }
-
-        public void Depositar(double cantidad)
-        {
-           Saldo += cantidad;
-        }
-        public void Retirar(double cantidad)
-        {
-            if (cantidad <= Saldo)
-            {
-                Saldo -= cantidad;
-            }
-            else
-            {
-                Console.WriteLine("Saldo insuficiente.");
-            }
-        }
-        static List<Cuenta> cuentas = new List<Cuenta>();
-
-
     }
 }

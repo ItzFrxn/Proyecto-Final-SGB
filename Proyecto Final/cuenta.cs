@@ -10,12 +10,12 @@ namespace Proyecto_Final
     // CLASE PRINCIPAL - CUENTA
     public abstract class Cuenta
     {
-        private int numRegistro;
+        private int numRegistro = new Random().Next(1000, 9999);
         private string nombres;
         private string apellidos;
         private int edad;
-        private string fechaApt;
-        private double saldo;
+        private string fechaApt = DateTime.Now.ToString("yyyy-MM-dd");
+        private double saldo = 0;
         private string tipo;
 
         // Propiedades
@@ -51,7 +51,7 @@ namespace Proyecto_Final
         }
         public string Tipo
         {
-            get { return this.tipo; } 
+            get { return this.tipo; }
             set { this.tipo = value; }
         }
 
@@ -87,5 +87,24 @@ namespace Proyecto_Final
         public Inversion(string nombre, string apellido, int edad) : base(nombre, apellido, edad, "Inversion")
         {
         }
+
+        public void Depositar(double cantidad)
+        {
+           Saldo += cantidad;
+        }
+        public void Retirar(double cantidad)
+        {
+            if (cantidad <= Saldo)
+            {
+                Saldo -= cantidad;
+            }
+            else
+            {
+                Console.WriteLine("Saldo insuficiente.");
+            }
+        }
+        static List<Cuenta> cuentas = new List<Cuenta>();
+
+
     }
 }

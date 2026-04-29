@@ -98,6 +98,12 @@ namespace Proyecto_Final
     public class Credito : Cuenta
     {
         private int numTarjeta;
+        private int limite;
+
+        public int Limite
+        {
+            get { return limite; }
+        }
 
         public Credito(string nombre, string apellido, int edad) : base(nombre, apellido, edad, "Credito")
         {

@@ -13,21 +13,24 @@ namespace Proyecto_Final
         {
             List<Cuenta> cuentas = new List<Cuenta>();
 
-            //123456
-            Console.WriteLine("=======================");
-            Console.WriteLine("\tUATPay");
-            Console.WriteLine("=======================");
+            void Titulo(string msg)
+            {
+                Console.WriteLine("====================================");
+                Console.WriteLine($"\t{msg}");
+                Console.WriteLine("====================================");
+            }
+
+            Titulo("UATPay");
             Console.WriteLine("Welcome to UAT-Pay!");
             Console.WriteLine("1) Ingresar\n2) Registrarse");
 
             int op = Convert.ToInt32(Console.ReadLine());
+            Console.Clear();
+            Titulo("UATPay");
 
             switch (op)
             {
                 case 1:
-                    Console.WriteLine("=======================");
-                    Console.WriteLine("\tUATPay");
-                    Console.WriteLine("=======================");
                     Console.WriteLine("Proporcione los siguientes datos.");
 
                     Console.Write("Usuario: ");
@@ -38,10 +41,11 @@ namespace Proyecto_Final
 
                     string ususarioCorrecto = "admin";
                     string passCorrecto = "123456";
+                    Console.Clear();
 
                     if (user == ususarioCorrecto && pass == passCorrecto)
                     {
-                        Console.WriteLine("Acceso corrrecto");
+                        Titulo("Acceso correcto.");
 
                         int opcion;
                         do
@@ -51,6 +55,8 @@ namespace Proyecto_Final
                             Console.WriteLine("3.Salir");
 
                             opcion = Convert.ToInt32(Console.ReadLine());
+                            Console.Clear();
+                            Titulo("UATPay");
 
                             switch (opcion)
                             {
@@ -121,9 +127,6 @@ namespace Proyecto_Final
                     break;
 
                 case 2:
-                    Console.WriteLine("=======================");
-                    Console.WriteLine("\tUATPay");
-                    Console.WriteLine("=======================");
                     Console.WriteLine("Proporcione los siguientes datos.");
 
                     Console.Write("Nombre: ");

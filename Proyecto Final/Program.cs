@@ -1,9 +1,11 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Proyecto_Final
 {
@@ -12,6 +14,7 @@ namespace Proyecto_Final
         static void Main(string[] args)
         {
             List<Cuenta> cuentas = new List<Cuenta>();
+            GestorBanco.CargarCSV(cuentas);
 
             void Titulo(string msg)
             {
@@ -41,7 +44,6 @@ namespace Proyecto_Final
 
                     string ususarioCorrecto = "admin";
                     string passCorrecto = "123456";
-                    Console.Clear();
 
                     if (user == ususarioCorrecto && pass == passCorrecto)
                     {
@@ -52,10 +54,13 @@ namespace Proyecto_Final
                         {
                             Console.WriteLine("\n1.Agregar cuenta");
                             Console.WriteLine("2.Ver cuentas");
-                            Console.WriteLine("3.Salir");
+                            Console.WriteLine("3.Depositar");
+                            Console.WriteLine("4.Retirar");
+                            Console.WriteLine("5.Buscar cuenta");
+                            Console.WriteLine("6.Salir");
 
                             opcion = Convert.ToInt32(Console.ReadLine());
-                            Console.Clear();
+
                             Titulo("UATPay");
 
                             switch (opcion)
@@ -65,8 +70,20 @@ namespace Proyecto_Final
                                     Console.WriteLine("Nombre: ");
                                     string rName = Console.ReadLine();
 
+                                    if (rName.Contains(","))
+                                    {
+                                        Console.WriteLine("El nombre no puede contener comas.");
+                                        break;
+                                    }
+
                                     Console.WriteLine("Apellido: ");
                                     string rLastN = Console.ReadLine();
+
+                                    if (rLastN.Contains(","))
+                                    {
+                                        Console.WriteLine("El apellido no puede contener comas.");
+                                        break;
+                                    }
 
                                     Console.WriteLine("Edad: ");
                                     int rAge = Convert.ToInt32(Console.ReadLine());
@@ -114,11 +131,65 @@ namespace Proyecto_Final
                                     break;
 
                                 case 3:
-                                    Console.WriteLine("Saliendo del programa...");
+                                    Console.WriteLine("Ingrese el numero de cuenta: ");
+                                    int numDep = Convert.ToInt32(Console.ReadLine());
+
+                                    var cuentaDep = cuentas.FirstOrDefault(c => c.Registro == numDep);
+
+                                    if (cuentaDep != null)
+                                    {
+                                        Console.Write("Cantidad a depositar: ");
+                                        double cant = Convert.ToDouble(Console.ReadLine());
+
+                                        cuentaDep.Depositar(cant);
+                                        Console.WriteLine("Depósito exitoso.");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Cuenta no encontrada.");
+                                    }
                                     break;
+
+                               case 4:
+                                        Console.WriteLine("Ingresa numero de cuenta: ");
+                                        int numRet = Convert.ToInt32(Console.ReadLine());
+                                        
+                                        var cuentaRet = cuentas.Find(c => c.Registro == numRet);
+                                    if (cuentaRet != null)
+                                    {
+                                        Console.Write("Cantidad a retirar: ");
+                                        double cant = Convert.ToDouble(Console.ReadLine());
+
+                                        cuentaRet.Retirar(cant);
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Cuenta no encontrada.");
+                                    }
+                                    break;
+                                case 5:
+                                         Console.Write("Ingresar numero de cuenta: ");
+                                         int numBus = Convert.ToInt32(Console.ReadLine());
+                                         
+                                         var cuentaBus = cuentas.Find(c => c.Registro == numBus);
+
+                                    if (cuentaBus != null)
+                                    {
+                                        Console.WriteLine($"{cuentaBus.Registro} -{cuentaBus.Nombre} - {cuentaBus.Apellido} - {cuentaBus.Tipo} - saldo: ${cuentaBus.Saldo}");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Cuenta no encontrada.");
+                                    }
+                                    break;
+                                case 6:
+                                     GestorBanco.GuardarCSV(cuentas);
+                                    Console.WriteLine("Datos Guardados. Saliendo del sistema...");
+                                    break;
+
                             }
 
-                        } while (opcion != 3);
+                        } while (opcion != 6);
                     }
                     else
                     {

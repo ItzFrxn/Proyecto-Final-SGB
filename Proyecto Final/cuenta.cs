@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Final
 {
-    // CLASE PRINCIPAL - CUENTA
     public abstract class Cuenta
     {
         private int numRegistro;
@@ -18,7 +17,6 @@ namespace Proyecto_Final
         private double saldo;
         private string tipo;
 
-        // Propiedades
         public int Registro
         {
             get { return this.numRegistro; }
@@ -55,16 +53,24 @@ namespace Proyecto_Final
             set { this.tipo = value; }
         }
 
-        // Constructores
-        public Cuenta(string nombre, string apellido, int edad, string tipo)
+        public Cuenta(string nombre, string apellido, int edad, string tipo, double saldo)
         {
-            this.numRegistro = new Random().Next(1000, 9999);
-            this.nombres = nombre;
-            this.apellidos = apellido;
-            this.edad = edad;
-            this.tipo = tipo;
-            this.saldo = 0;
-            this.fechaApt = DateTime.Now.ToString("yyyy-MM-dd");
+            Nombre = nombre;
+            Apellido = apellido;
+            Edad = edad;
+            Tipo = tipo;
+            Saldo = saldo;
+        }
+
+        public Cuenta(int registro, string nombre, string apellido, int edad, string tipo, double saldo, string fecha)
+        {
+            Registro = registro;
+            Nombre = nombre;
+            Apellido = apellido;
+            Edad = edad;
+            Tipo= tipo;
+            Saldo= saldo;
+            Apertura = fecha;
         }
 
         public void Depositar(double cantidad)
@@ -82,47 +88,6 @@ namespace Proyecto_Final
             {
                 Console.WriteLine("Saldo insuficiente.");
             }
-        }
-
-    }
-
-    // CLASE  SECUNDARIAS - CHEQUERA
-    public class Chequera : Cuenta
-    {
-        public Chequera(string nombre, string apellido, int edad) : base(nombre, apellido, edad, "Chequera")
-        {
-        }
-    }
-
-    // CLASE - CREDITO
-    public class Credito : Cuenta
-    {
-        private int numTarjeta;
-        private int limite;
-
-        public int Limite
-        {
-            get { return limite; }
-        }
-
-        public Credito(string nombre, string apellido, int edad) : base(nombre, apellido, edad, "Credito")
-        {
-        }
-        public override void Retirar(double cantidad)
-        {
-           Saldo -= cantidad;
-            Console.WriteLine($"Has retirado {cantidad} de tu cuenta de crédito. Saldo actual: {Saldo}");
-        }
-    }
-
-    // CLASE - INVERSION
-    public class Inversion : Cuenta
-    {
-        private double tasa;
-        private string periodo;
-
-        public Inversion(string nombre, string apellido, int edad) : base(nombre, apellido, edad, "Inversion")
-        {
         }
     }
 }

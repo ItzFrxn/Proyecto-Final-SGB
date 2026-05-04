@@ -10,37 +10,98 @@ namespace Proyecto_Final
 {
     internal class Program
     {
+        static string FileAcc = "cuentas.csv";
+
+        static void Titulo(string msg)
+        {
+            Console.WriteLine("====================================");
+            Console.WriteLine($"\t{msg}");
+            Console.WriteLine("====================================");
+        }
+        static int Menu()
+        {
+            Console.Clear();
+            Titulo("UATPay");
+            Console.WriteLine("Welcome to UAT-Pay!");
+            Console.Write("1) Ingresar\n2) Registrarse\n> ");
+            int op = Convert.ToInt32(Console.ReadLine());
+            return op;
+        }
+        static void Ingreso()
+        {
+            Console.Clear();
+            Titulo("UATPay - Ingresando");
+            Console.WriteLine(" Numero de cuenta: ");
+            int iNumCuenta = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Contraseña:");
+            string iPass = Console.ReadLine();
+
+        }
+        static void Registro()
+        {
+            Console.Clear();
+            Titulo("UATPay - Registro");
+            Console.WriteLine("Proporcione los siguientes datos");
+            string t;
+            do
+            {
+                Console.Write("ss");
+                t = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(t) || t.Contains("|"));
+             Console.WriteLine(t);
+            Console.WriteLine("Nombre(s): ");
+            string rNombre = Console.ReadLine();
+            Console.WriteLine("Apellido(s): ");
+            string rApellido = Console.ReadLine();
+            Console.WriteLine("Edad:");
+            int rEdad = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Contraseña: ");
+            string rPass = Console.ReadLine();
+            Console.WriteLine("");
+            CrearCuenta();
+
+        }
+        static void CrearCuenta()
+        {
+            Console.Clear();
+            Titulo("UATPay - Nueva Cuenta");
+            Console.WriteLine("Tipo de cuenta: Chequera / Credito / Inversion");
+            string cTipo = Console.ReadLine().ToLower();
+            switch (cTipo)
+            {
+                case "chequera":
+                    Console.WriteLine("Chequera");
+                    break;
+                case "credito":
+                    Console.WriteLine("Credito");
+                    break;
+                case "inversion":
+                    Console.WriteLine("Inversion");
+                    break;
+                default:
+                    Console.WriteLine("Error: Opcion incorrecta.");
+                    break;
+            }
+        }
         static void Main(string[] args)
         {
+            if (!File.Exists(FileAcc))
+                File.WriteAllText(FileAcc, "NR|NOMBRE|APELLIDO|EDAD|SALDO|TIPO|APERTURA\n");
+
+            /*Console.Clear();
             List<Cuenta> cuentas = new List<Cuenta>();
             GestorBanco.CargarCSV(cuentas);
 
-            void Titulo(string msg)
-            {
-                Console.WriteLine("====================================");
-                Console.WriteLine($"\t{msg}");
-                Console.WriteLine("====================================");
-            }
-
-            Titulo("UATPay");
-            Console.WriteLine("Welcome to UAT-Pay!");
-            Console.WriteLine("1) Ingresar\n2) Registrarse");
-
-            int op = Convert.ToInt32(Console.ReadLine());
-            Console.Clear();
-            Titulo("UATPay");
-
-            switch (op)
+            switch (Menu())
             {
                 case 1:
+                    Ingreso();
+                    /*
                     Console.WriteLine("Proporcione los siguientes datos.");
-
                     Console.Write("Usuario: ");
                     string user = Console.ReadLine();
-
                     Console.Write("Contraseña: ");
                     string pass = Console.ReadLine();
-
                     string ususarioCorrecto = "admin";
                     string passCorrecto = "123456";
 
@@ -149,11 +210,11 @@ namespace Proyecto_Final
                                     }
                                     break;
 
-                               case 4:
-                                        Console.WriteLine("Ingresa numero de cuenta: ");
-                                        int numRet = Convert.ToInt32(Console.ReadLine());
-                                        
-                                        var cuentaRet = cuentas.Find(c => c.Registro == numRet);
+                                case 4:
+                                    Console.WriteLine("Ingresa numero de cuenta: ");
+                                    int numRet = Convert.ToInt32(Console.ReadLine());
+
+                                    var cuentaRet = cuentas.Find(c => c.Registro == numRet);
                                     if (cuentaRet != null)
                                     {
                                         Console.Write("Cantidad a retirar: ");
@@ -167,10 +228,10 @@ namespace Proyecto_Final
                                     }
                                     break;
                                 case 5:
-                                         Console.Write("Ingresar numero de cuenta: ");
-                                         int numBus = Convert.ToInt32(Console.ReadLine());
-                                         
-                                         var cuentaBus = cuentas.Find(c => c.Registro == numBus);
+                                    Console.Write("Ingresar numero de cuenta: ");
+                                    int numBus = Convert.ToInt32(Console.ReadLine());
+
+                                    var cuentaBus = cuentas.Find(c => c.Registro == numBus);
 
                                     if (cuentaBus != null)
                                     {
@@ -182,7 +243,7 @@ namespace Proyecto_Final
                                     }
                                     break;
                                 case 6:
-                                     GestorBanco.GuardarCSV(cuentas);
+                                    GestorBanco.GuardarCSV(cuentas);
                                     Console.WriteLine("Datos Guardados. Saliendo del sistema...");
                                     break;
 
@@ -194,9 +255,12 @@ namespace Proyecto_Final
                     {
                         Console.WriteLine("Acceso denegado");
                     }
+                    
                     break;
 
                 case 2:
+                    Registro();
+                    /*
                     Console.WriteLine("Proporcione los siguientes datos.");
 
                     Console.Write("Nombre: ");
@@ -235,6 +299,10 @@ namespace Proyecto_Final
                         Console.WriteLine("Tipo de cuenta no válido.");
                     }
                     break;
+                default:
+
+                    break;
+             */       
             }
         }
     }

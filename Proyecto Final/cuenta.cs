@@ -53,6 +53,7 @@ namespace Proyecto_Final
             set { this.tipo = value; }
         }
 
+
         public Cuenta(string nombre, string apellido, int edad, string tipo, double saldo)
         {
             Nombre = nombre;
@@ -75,14 +76,14 @@ namespace Proyecto_Final
 
         public void Depositar(double cantidad)
         {
-            saldo += cantidad;
+            Saldo += cantidad;
         }
 
         public virtual void Retirar(double cantidad)
         {
-            if (cantidad <= saldo)
+            if (cantidad <= Saldo)
             {
-                saldo -= cantidad;
+                Saldo -= cantidad;
             }
             else
             {

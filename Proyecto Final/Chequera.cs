@@ -8,7 +8,7 @@ namespace Proyecto_Final
 {
     public class Chequera : Cuenta
     {
-        public Chequera(string nombre, string apellido, int edad, double saldo = 00.00) : base(nombre, apellido, edad, "Chequera", saldo)
+        public Chequera(int id, string nombre, string apellido, int edad, string fecha, double saldo = 00.00) : base(id, nombre, apellido, edad, "Chequera", saldo, fecha)
         {
         }
     }

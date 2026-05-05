@@ -97,6 +97,8 @@ namespace Proyecto_Final
                     Console.WriteLine("Error: Opcion incorrecta.");
                     break;
             }
+            cuentas.Add(nueva);
+            GuardarCSV(cuentas);
         }
         static void Opciones(List<Cuenta> cuentas)
         {

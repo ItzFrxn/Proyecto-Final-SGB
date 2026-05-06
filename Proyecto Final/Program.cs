@@ -23,7 +23,6 @@ namespace Proyecto_Final
             Console.WriteLine($"\tUATPay - {msg}");
             Console.WriteLine("====================================");
         }
-
 		static int LeerInt(string msg)
 		{
 			int valor;
@@ -36,7 +35,6 @@ namespace Proyecto_Final
 				Console.WriteLine("Error: ingrese un número válido.");
 			} while (true);
 		}
-
 		static double LeerDouble(string msg)
 		{
 			double valor;
@@ -49,7 +47,6 @@ namespace Proyecto_Final
 				Console.WriteLine("Error: ingrese una cantidad válida.");
 			} while (true);
 		}
-
 		static string LeerString(string msg)
 		{
 			string valor;
@@ -125,7 +122,7 @@ namespace Proyecto_Final
         static bool Crear(List<Usuario> user)
         {
             Console.Clear();
-            Titulo("Crear Cuenta");
+            Titulo("Crear Perfil");
 
             Console.WriteLine("Ingrese los siguientes datos.");
             string cUser = LeerString("Usuario: ");
@@ -213,7 +210,12 @@ namespace Proyecto_Final
             string rNombre = LeerString("Nombres(S)");
             string rApellido = LeerString("Apellidos(S):");
             int rEdad = LeerInt("Edad: ");
-            int rNR = cuentas.Count > 0 ? cuentas.Max(c => c.Registro) + 1 : 1;
+			if (rEdad <= 0 || rEdad > 120)
+			{
+				Console.WriteLine("Edad inválida.");
+				return;
+			}
+			int rNR = cuentas.Count > 0 ? cuentas.Max(c => c.Registro) + 1 : 1;
             string cTipo = LeerString("Tipo de cuenta (chequera / credito / inversion): ").ToLower();
             string cFecha = DateTime.Now.ToString("yyyy-MM-dd");
 			int rID = uPrincipal.ID;
@@ -232,9 +234,8 @@ namespace Proyecto_Final
                 case "inversion":
                     nueva = new Inversion(rID, rNR, rNombre, rApellido, rEdad, cFecha);
                     Console.WriteLine("Cuenta Inversion");
-                    Console.Write("Tasa: ");
                     ((Inversion)nueva).Tasa = LeerDouble("Tasa: ");
-                    ((Inversion)nueva).Periodo = LeerPeriodo("Periodo (diario / semanal / mensaul / anual");
+                    ((Inversion)nueva).Periodo = LeerPeriodo("Periodo (diario / semanal / mensaul / anual):");
                     break;
                 default:
                     Console.WriteLine("Error: Opcion incorrecta.");
@@ -304,6 +305,9 @@ namespace Proyecto_Final
 				switch (opcion)
 				{
 					case 1:
+
+						Console.Clear();
+						Titulo("Editar Cuenta");
 						cuenta.Nombre = LeerString("Nuevo nombre: ");
 						cuenta.Apellido = LeerString("Nuevo apellido: ");
 						cuenta.Edad = LeerInt("Nueva edad: ");
@@ -311,19 +315,29 @@ namespace Proyecto_Final
 						break;
 
 					case 2:
-						cuentas.Remove(cuenta);
-						GestorBanco.Guardar(cuentas);
-						Console.WriteLine("Cuenta eliminada.");
-						Console.ReadKey();
-						return;
-
+						Console.Clear();
+						Titulo("Eliminar Cuenta");
+                        string mConfir = LeerString("Eliminar cuenta? (si/no): ").ToLower();
+                        if (mConfir == "si")
+                        {
+                            cuentas.Remove(cuenta);
+                            GestorBanco.Guardar(cuentas);
+                            Console.WriteLine("Cuenta eliminada.");
+                            Console.ReadKey();
+                            return;
+                        }
+                        break;
 					case 3:
+						Console.Clear();
+						Titulo("Depositar Cuenta");
 						double cDepositar = LeerDouble("Cantidad: ");
 						cuenta.Depositar(cDepositar);
 						GestorBanco.Guardar(cuentas);
 						break;
 
 					case 4:
+						Console.Clear();
+						Titulo("Retirar Cuenta");
 						double cRetirar = LeerDouble("Cantidad: ");
 						cuenta.Retirar(cRetirar);
 						GestorBanco.Guardar(cuentas);
@@ -388,103 +402,6 @@ namespace Proyecto_Final
             } while (opcion != 3);
         }
         
-        static void Modificar(List<Cuenta> cuentas)
-        {
-            Console.Clear();
-            Titulo("Editar Cuenta");
-            Console.Write("ID a modificar: ");
-            if (!int.TryParse(Console.ReadLine(), out int id))
-            {
-                Console.WriteLine("Eror: ID inválido...");
-                return;
-            }
-
-			var cuenta = cuentas.Find(c => c.Registro == id && c.ID == uPrincipal.ID);
-
-			if (cuenta != null)
-            {
-				cuenta.Nombre = LeerString("Nombre: ");
-				cuenta.Apellido = LeerString("Apellido: ");
-				cuenta.Edad = LeerInt("Edad: ");
-
-				GestorBanco.Guardar(cuentas);
-                Console.WriteLine("Actualizado");
-            } if (cuenta == null)
-            {
-                Console.WriteLine("Error: Cuenta no encontrada...");
-            }
-        }
-        
-        static void Eliminar(List<Cuenta> cuentas)
-        {
-            Console.Clear();
-            Titulo("Eliminar cuenta");
-            Console.Write("ID a eliminar: ");
-            if (!int.TryParse(Console.ReadLine(), out int id))
-            {
-                Console.WriteLine("Eror: ID inválido...");
-                return;
-            }
-
-			cuentas.RemoveAll(c => c.Registro == id && c.ID == uPrincipal.ID);
-            GestorBanco.Guardar(cuentas);
-            Console.WriteLine("Cuenta eliminada.");
-        }
-
-        static void Depositar(List<Cuenta> cuentas)
-        {
-            Console.Clear();
-            Titulo("Depositar");
-            Console.Write("Numero de Cuenta: ");
-            if (!int.TryParse(Console.ReadLine(), out int id))
-            {
-                Console.WriteLine("Eror: ID inválido...");
-                return;
-            }
-
-			var cuenta = cuentas.Find(c => c.Registro == id && c.ID == uPrincipal.ID);
-
-			if (cuenta != null)
-            {
-                Console.Write("Cantidad: ");
-                if (!double.TryParse(Console.ReadLine(), out double m) || m <= 0)
-                {
-                    Console.WriteLine("Error: cantidad inválida");
-                    return;
-                }
-                cuenta.Depositar(m);
-                GestorBanco.Guardar(cuentas);
-                Console.WriteLine($"Se deposito a la cuenta ${m}");
-            }
-        }
-
-        static void Retirar(List<Cuenta> cuentas)
-        {
-            Console.Clear();
-            Titulo("Retirar");
-            Console.Write("ID: ");
-            if (!int.TryParse(Console.ReadLine(), out int id))
-            {
-                Console.WriteLine("Eror: ID inválido...");
-                return;
-            }
-
-			var cuenta = cuentas.Find(c => c.Registro == id && c.ID == uPrincipal.ID);
-
-			if (cuenta != null)
-            {
-                Console.Write("Cantidad: "); 
-                if (!double.TryParse(Console.ReadLine(), out double m) || m <= 0)
-                {
-                    Console.WriteLine("Error: cantidad inválida");
-                    return;
-                }
-                cuenta.Retirar(m);
-                GestorBanco.Guardar(cuentas);
-                Console.WriteLine($"Has retirado {m} de tu cuenta  Saldo actual: {cuenta.Saldo}");
-            }
-        }
-
         static void Main(string[] args)
         {
             List<Cuenta> cuentas = new List<Cuenta>();

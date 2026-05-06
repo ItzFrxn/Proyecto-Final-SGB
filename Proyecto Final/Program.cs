@@ -11,7 +11,6 @@ namespace Proyecto_Final
     internal class Program
     {
         public static bool Iniciar = true;
-        public static string Datos = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "cuentas.csv");
         static void Titulo(string msg)
         {
             Console.WriteLine("====================================");
@@ -27,16 +26,27 @@ namespace Proyecto_Final
             Console.WriteLine("1) Iniciar sesión");
             Console.WriteLine("2) Crear cuenta");
             Console.WriteLine("3) Salir");
+            Console.WriteLine("\n0) Informacion");
             Console.Write("> ");
-            int op = Convert.ToInt32(Console.ReadLine());
-            return op;
+            return int.TryParse(Console.ReadLine(), out int op) ? op : 0;
+        }
+        static void Info()
+        {
+            Console.Clear();
+            Titulo("UATPay - Informacion");
+            Console.WriteLine("idk");
+            Console.ReadKey();
         }
         static void Ingreso(List<Cuenta> cuentas)
         {
             Console.Clear();
             Titulo("UATPay - Iniciar Sesión");
             Console.WriteLine("Numero de Registro (ID): ");
-            int iNumCuenta = Convert.ToInt32(Console.ReadLine());
+            if (!int.TryParse(Console.ReadLine(), out int iNumCuenta))
+            {
+                Console.WriteLine("Error: ID invalida...");
+                return;
+            }
             var cuenta = cuentas.Find(c => c.Registro == iNumCuenta);
 
             if (cuenta != null)
@@ -45,7 +55,7 @@ namespace Proyecto_Final
             }
             else
             {
-                Console.WriteLine("Cuenta no encontrada.");
+                Console.WriteLine("Cuenta no encontrada.\n[ENTER] Para continuar...");
                 Console.ReadKey();
             }
         }
@@ -58,8 +68,18 @@ namespace Proyecto_Final
             string rNombre = Console.ReadLine();
             Console.WriteLine("Apellido(s): ");
             string rApellido = Console.ReadLine();
+            if (rNombre.Contains("|") || rApellido.Contains("|"))
+            {
+                Console.WriteLine("Error: No usar | en los datos");
+                return;
+            }
             Console.WriteLine("Edad:");
-            int rEdad = Convert.ToInt32(Console.ReadLine());
+            if (!int.TryParse(Console.ReadLine(), out int rEdad))
+            {
+                Console.WriteLine("Error: Edad inválido...");
+                return;
+            }
+
             int rNR = cuentas.Count > 0 ? cuentas.Max(c => c.Registro) + 1 : 1;
             Console.WriteLine("Tipo de cuenta: Chequera / Credito / Inversion");
             string cTipo = Console.ReadLine().ToLower();
@@ -70,18 +90,18 @@ namespace Proyecto_Final
             {
                 case "chequera":
                     nueva = new Chequera(rNR, rNombre, rApellido, rEdad, cFecha);
-                    Console.WriteLine("Chequera");
+                    Console.WriteLine("Cuenta Chequera");
                     break;
                 case "credito":
                     nueva = new Credito(rNR, rNombre, rApellido, rEdad, cFecha);
-                    Console.WriteLine("Credito");
+                    Console.WriteLine("Cuenta Credito");
                     break;
                 case "inversion":
                     nueva = new Inversion(rNR, rNombre, rApellido, rEdad, cFecha);
-                    Console.WriteLine("Inversion");
+                    Console.WriteLine("Cuenta Inversion");
                     Console.Write("Tasa: ");
                     ((Inversion)nueva).Tasa = double.Parse(Console.ReadLine());
-                    Console.Write("Periodo: ");
+                    Console.Write("Periodo (semanal, mensual, anual): ");
                     ((Inversion)nueva).Periodo = Console.ReadLine();
                     break;
                 default:
@@ -89,7 +109,10 @@ namespace Proyecto_Final
                     break;
             }
             cuentas.Add(nueva);
-            GuardarCSV(cuentas);
+            GestorBanco.Guardar(cuentas);
+            Console.WriteLine($"Cuenta creada ID: {rNR}");
+            Console.WriteLine("[{ENTER}] Para continuar...");
+            Console.ReadKey();
         }
         static void Opciones(List<Cuenta> cuentas)
         {
@@ -112,7 +135,7 @@ namespace Proyecto_Final
                 switch (oOpcion)
                 {
                     case 1: Ver(cuentas); break;
-                    case 2: Agregar(cuentas); break;
+                    case 2: Registro(cuentas); break;
                     case 3: Modificar(cuentas); break;
                     case 4: Eliminar(cuentas); break;
                     case 5: Depositar(cuentas); break;
@@ -130,7 +153,7 @@ namespace Proyecto_Final
             Console.Clear();
             Titulo("UATPay");
             Iniciar = false;
-            GuardarCSV(x);
+            GestorBanco.Guardar(x);
             Console.WriteLine("Finalizo el programa.");
         }
 
@@ -143,25 +166,28 @@ namespace Proyecto_Final
                 Console.WriteLine($"{c.Registro} | {c.Nombre} | {c.Apellido} | {c.Tipo} ");
 
             Console.Write("ID: ");
-            int id = int.Parse(Console.ReadLine());
+            if (!int.TryParse(Console.ReadLine(), out int id))
+            {
+                Console.WriteLine("Error: ID inválido...");
+                return;
+            }
 
             var cuenta = cuentas.Find(c => c.Registro == id);
 
             if (cuenta != null)
                 Console.WriteLine($"{cuenta.Registro} | {cuenta.Nombre} {cuenta.Apellido} | {cuenta.Tipo} | Saldo: {cuenta.Saldo} | {cuenta.Apertura}");
             else
-                Console.WriteLine("No encontrada");
-        }
-
-        static void Agregar(List<Cuenta> cuentas)
-        {
-            Registro(cuentas);
+                Console.WriteLine("Error: Cuenta no encontrada...");
         }
         
         static void Modificar(List<Cuenta> cuentas)
         {
             Console.Write("ID a modificar: ");
-            int id = int.Parse(Console.ReadLine());
+            if (!int.TryParse(Console.ReadLine(), out int id))
+            {
+                Console.WriteLine("Eror: ID inválido...");
+                return;
+            }
 
             var c = cuentas.Find(x => x.Registro == id);
 
@@ -176,35 +202,49 @@ namespace Proyecto_Final
                 Console.Write("Nueva edad: ");
                 c.Edad = int.Parse(Console.ReadLine());
 
-                GuardarCSV(cuentas);
+                GestorBanco.Guardar(cuentas);
                 Console.WriteLine("Actualizado");
+            } if (c == null)
+            {
+                Console.WriteLine("Error: Cuenta no encontrada...");
             }
         }
         
         static void Eliminar(List<Cuenta> cuentas)
         {
             Console.Write("ID a eliminar: ");
-            int id = int.Parse(Console.ReadLine());
+            if (!int.TryParse(Console.ReadLine(), out int id))
+            {
+                Console.WriteLine("Eror: ID inválido...");
+                return;
+            }
 
             cuentas.RemoveAll(c => c.Registro == id);
-            GuardarCSV(cuentas);
+            GestorBanco.Guardar(cuentas);
             Console.WriteLine("Cuenta eliminada.");
         }
 
         static void Depositar(List<Cuenta> cuentas)
         {
             Console.Write("Numero de Cuenta: ");
-            int id = int.Parse(Console.ReadLine());
+            if (!int.TryParse(Console.ReadLine(), out int id))
+            {
+                Console.WriteLine("Eror: ID inválido...");
+                return;
+            }
 
             var c = cuentas.Find(x => x.Registro == id);
 
             if (c != null)
             {
                 Console.Write("Cantidad: ");
-                double m = double.Parse(Console.ReadLine());
-
+                if (!double.TryParse(Console.ReadLine(), out double m) || m <= 0)
+                {
+                    Console.WriteLine("Error: cantidad inválida");
+                    return;
+                }
                 c.Depositar(m);
-                GuardarCSV(cuentas);
+                GestorBanco.Guardar(cuentas);
                 Console.WriteLine($"Se deposito a la cuenta ${m}");
             }
         }
@@ -212,72 +252,40 @@ namespace Proyecto_Final
         static void Retirar(List<Cuenta> cuentas)
         {
             Console.Write("ID: ");
-            int id = int.Parse(Console.ReadLine());
+            if (!int.TryParse(Console.ReadLine(), out int id))
+            {
+                Console.WriteLine("Eror: ID inválido...");
+                return;
+            }
 
             var c = cuentas.Find(x => x.Registro == id);
 
             if (c != null)
             {
-                Console.Write("Cantidad: ");
-                double m = double.Parse(Console.ReadLine());
-
+                Console.Write("Cantidad: "); 
+                if (!double.TryParse(Console.ReadLine(), out double m) || m <= 0)
+                {
+                    Console.WriteLine("Error: cantidad inválida");
+                    return;
+                }
                 c.Retirar(m);
-                GuardarCSV(cuentas);
-                Console.WriteLine($"Se retiro a la cuenta ${m}");
-            }
-        } 
-        public static void Cargar(List<Cuenta> cuentas)
-        {
-            if (!File.Exists(Datos))
-                File.WriteAllText(Datos, "ID|NOMBRE|APELLIDO|EDAD|SALDO|TIPO|FECHA\n");
-
-            var lineas = File.ReadAllLines(Datos);
-
-            foreach (var l in lineas.Skip(1))
-            {
-                var d = l.Split('|');
-
-                Cuenta c = null;
-
-                if (d[5] == "Chequera")
-                    c = new Chequera(int.Parse(d[0]), d[1], d[2], int.Parse(d[3]), d[6], double.Parse(d[4]));
-
-                else if (d[5] == "Credito")
-                    c = new Credito(int.Parse(d[0]), d[1], d[2], int.Parse(d[3]), d[6], double.Parse(d[4]));
-
-                else if (d[5] == "Inversion")
-                    c = new Inversion(int.Parse(d[0]), d[1], d[2], int.Parse(d[3]), d[6], double.Parse(d[4]));
-
-                if (c != null)
-                {
-                    c.Registro = int.Parse(d[0]);
-                    c.Apertura = d[6];
-                    cuentas.Add(c);
-                }
-            }
-        }
-        public static void GuardarCSV(List<Cuenta> cuentas)
-        {
-            using (StreamWriter sw = new StreamWriter(Datos))
-            {
-                sw.WriteLine("ID|NOMBRE|APELLIDO|EDAD|SALDO|TIPO|FECHA");
-
-                foreach (var c in cuentas)
-                {
-                    sw.WriteLine($"{c.Registro}|{c.Nombre}|{c.Apellido}|{c.Edad}|{c.Saldo}|{c.Tipo}|{c.Apertura}");
-                }
+                GestorBanco.Guardar(cuentas);
+                Console.WriteLine($"Has retirado {m} de tu cuenta de crédito. Saldo actual: {c.Saldo}");
             }
         }
 
         static void Main(string[] args)
         {
             List<Cuenta> cuentas = new List<Cuenta>();
-            Cargar(cuentas);
+            GestorBanco.Cargar(cuentas);
 
             while (Iniciar)
             {
                 switch (Menu())
                 {
+                    case 0:
+                        Info();
+                        break;
                     case 1:
                         Ingreso(cuentas);
                         break;
@@ -290,7 +298,7 @@ namespace Proyecto_Final
                     default:
                         Console.Clear();
                         Titulo("UATPay - Error");
-                        Console.WriteLine("Opcion no encontrada, intentelo de nuevo.\n[ENTER] para continuar...");
+                        Console.WriteLine("Opcion no encontrada.\n[ENTER] para continuar...");
                         Console.ReadKey();
                         break;
                 }

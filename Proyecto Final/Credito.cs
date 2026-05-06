@@ -28,6 +28,11 @@ namespace Proyecto_Final
 
         public override void Retirar(double cantidad)
         {
+            if (cantidad <= 0)
+            {
+                Console.WriteLine("Error: Cantidad inválida.");
+                return;
+            }
             Saldo -= cantidad;
             Console.WriteLine($"Has retirado {cantidad} de tu cuenta de crédito. Saldo actual: {Saldo}");
         }

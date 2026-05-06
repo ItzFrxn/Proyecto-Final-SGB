@@ -81,13 +81,18 @@ namespace Proyecto_Final
 
         public virtual void Retirar(double cantidad)
         {
+            if (cantidad <= 0)
+            {
+                Console.WriteLine("Error: Cantidad inválida.");
+                return;
+            }
             if (cantidad <= Saldo)
             {
                 Saldo -= cantidad;
             }
             else
             {
-                Console.WriteLine("Saldo insuficiente.");
+                Console.WriteLine("Error: Saldo insuficiente.");
             }
         }
     }

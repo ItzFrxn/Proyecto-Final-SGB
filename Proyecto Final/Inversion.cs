@@ -22,7 +22,7 @@ namespace Proyecto_Final
             set { this.periodo = value; }
         }
 
-        public Inversion(int id, string nombre, string apellido, int edad, string fecha, double saldo = 00.00) : base(id, nombre, apellido, edad, "Inversion", saldo, fecha)
+        public Inversion(int id, int nr, string nombre, string apellido, int edad, string fecha, double saldo = 00.00) : base(id, nr, nombre, apellido, edad, "Inversion", saldo, fecha)
         {
         }
     }

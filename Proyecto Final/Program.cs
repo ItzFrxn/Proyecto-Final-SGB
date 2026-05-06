@@ -1,64 +1,115 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
 
 namespace Proyecto_Final
 {
     internal class Program
     {
         public static bool Iniciar = true;
+        public static Usuario uPrincipal = null;
+
+        // I N I C I O
         static void Titulo(string msg)
         {
             Console.WriteLine("====================================");
-            Console.WriteLine($"\t{msg}");
+            Console.WriteLine($"\tUATPay - {msg}");
             Console.WriteLine("====================================");
         }
-
         static int Menu()
         {
             Console.Clear();
-            Titulo("UATPay");
+            Titulo("Inicio");
             Console.WriteLine("Bienvenido usuario!");
             Console.WriteLine("1) Iniciar sesión");
             Console.WriteLine("2) Crear cuenta");
-            Console.WriteLine("3) Salir");
-            Console.WriteLine("\n0) Informacion");
+            Console.WriteLine("3) Informacion");
+            Console.WriteLine("4) Salir");
             Console.Write("> ");
             return int.TryParse(Console.ReadLine(), out int op) ? op : 0;
         }
         static void Info()
         {
             Console.Clear();
-            Titulo("UATPay - Informacion");
-            Console.WriteLine("idk");
+            Titulo("Informacion");
+            Console.WriteLine("Proyecto Final de Programacion Orientada a Objetos");
+            Console.WriteLine("\nCreadores:\nRivera Cruz Pablo\nMelchor Carrillo Francisco");
+            Console.WriteLine("\n[ENTER] Para regresar.");
             Console.ReadKey();
         }
-        static void Ingreso(List<Cuenta> cuentas)
+        // U S U A R I O
+        static bool Sesion(List<Usuario> user)
         {
             Console.Clear();
-            Titulo("UATPay - Iniciar Sesión");
-            Console.WriteLine("Numero de Registro (ID): ");
-            if (!int.TryParse(Console.ReadLine(), out int iNumCuenta))
-            {
-                Console.WriteLine("Error: ID invalida...");
-                return;
-            }
-            var cuenta = cuentas.Find(c => c.Registro == iNumCuenta);
+            Titulo("Iniciar Sesión");
+            Console.Write("Nombre o ID: ");
+            string iNombre = Console.ReadLine();
+            Console.Write("Contraseña: ");
+            string iPass = Console.ReadLine();
 
-            if (cuenta != null)
+            Usuario usuario = null;
+
+            if (int.TryParse(iNombre, out int iUsers))
+                usuario = user.Find(u => u.ID == iUsers && u.Pass == iPass);
+            else
+                usuario = user.Find(u => u.Nombre == iNombre && u.Pass == iPass);
+            
+            if (usuario != null)
             {
-                Opciones(cuentas);
+                uPrincipal = usuario;
+                return true;
+            }
+
+            Console.WriteLine("Error: Datos incorrectos.\n[ENTER] Para regresar.");
+            Console.ReadKey();
+            return false;
+        }
+        static bool Crear(List<Usuario> user)
+        {
+            Console.Clear();
+            Titulo("Crear cuenta");
+            Console.WriteLine("Ingrese los siguientes datos.");
+            Console.Write("Usuario: ");
+            string cUser = Console.ReadLine();
+            Console.Write("Contraseña: ");
+            string cPass = Console.ReadLine();
+            if (cUser.Contains("|") || cPass.Contains("|"))
+            {
+                Console.WriteLine("Error: No usar | en los datos.\n[ENTER] Para regresar,");
+                Console.ReadKey();
+                return false;
             }
             else
             {
-                Console.WriteLine("Cuenta no encontrada.\n[ENTER] Para continuar...");
-                Console.ReadKey();
+                if (user.Any(u => u.Nombre == cUser))
+                {
+                    Console.WriteLine("Error: Usuario ya existe...");
+                    Console.ReadKey();
+                    return false;
+                }
+                int cID = user.Count > 0 ? user.Max(u => u.ID) + 1 : 1;
+                user.Add(new Usuario(cID, cUser, cPass));
+                GestorBanco.GuardarUsuarios(user);
+
+                uPrincipal = user.Find(u => u.ID == cID);
+                return true;
             }
         }
+        static void InfoUsuario()
+        {
+            Console.Clear();
+            Titulo("Usuario");
+            Console.WriteLine($"Nombre: {uPrincipal.Nombre}");
+            Console.WriteLine($"ID: {uPrincipal.ID}");
+            Console.WriteLine($"Contraseña: {uPrincipal.Pass}");
+            Console.ReadKey();
+        }
+        // C U E N T A S
         static void Registro(List<Cuenta> cuentas)
         {
             Console.Clear();
@@ -85,19 +136,19 @@ namespace Proyecto_Final
             string cTipo = Console.ReadLine().ToLower();
             string cFecha = DateTime.Now.ToString("yyyy-MM-dd");
             Cuenta nueva = null;
-
+            int rID = uPrincipal.ID;
             switch (cTipo)
             {
                 case "chequera":
-                    nueva = new Chequera(rNR, rNombre, rApellido, rEdad, cFecha);
+                    nueva = new Chequera(rID, rNR, rNombre, rApellido, rEdad, cFecha);
                     Console.WriteLine("Cuenta Chequera");
                     break;
                 case "credito":
-                    nueva = new Credito(rNR, rNombre, rApellido, rEdad, cFecha);
+                    nueva = new Credito(rID, rNR, rNombre, rApellido, rEdad, cFecha);
                     Console.WriteLine("Cuenta Credito");
                     break;
                 case "inversion":
-                    nueva = new Inversion(rNR, rNombre, rApellido, rEdad, cFecha);
+                    nueva = new Inversion(rID, rNR, rNombre, rApellido, rEdad, cFecha);
                     Console.WriteLine("Cuenta Inversion");
                     Console.Write("Tasa: ");
                     ((Inversion)nueva).Tasa = double.Parse(Console.ReadLine());
@@ -120,14 +171,16 @@ namespace Proyecto_Final
             do
             {
                 Console.Clear();
-                Titulo("UATPay - Menú");
+                Titulo("Menú");
+                Console.WriteLine($"Bienvenido {uPrincipal.Nombre}");
                 Console.WriteLine("1) Ver cuentas");
                 Console.WriteLine("2) Agregar cuenta");
                 Console.WriteLine("3) Modificar cuenta");
                 Console.WriteLine("4) Eliminar cuenta");
-                Console.WriteLine("5) Depositar");
-                Console.WriteLine("6) Retirar");
-                Console.WriteLine("7) Salir");
+                Console.WriteLine("5) Ver usuario");
+                Console.WriteLine("6) Depositar");
+                Console.WriteLine("7) Retirar");
+                Console.WriteLine("8) Cerrar sesion");
                 Console.Write("> ");
 
                 oOpcion = Convert.ToInt32(Console.ReadLine());
@@ -138,9 +191,10 @@ namespace Proyecto_Final
                     case 2: Registro(cuentas); break;
                     case 3: Modificar(cuentas); break;
                     case 4: Eliminar(cuentas); break;
-                    case 5: Depositar(cuentas); break;
-                    case 6: Retirar(cuentas); break;
-                    case 7: Salir(cuentas); break;
+                    case 5: InfoUsuario(); break;
+                    case 6: Depositar(cuentas); break;
+                    case 7: Retirar(cuentas); break;
+                    case 8: Salir(cuentas); break;
                     default: Console.WriteLine("Opción inválida\n[ENTER] para continuar..."); break;
                 }
 
@@ -155,6 +209,7 @@ namespace Proyecto_Final
             Iniciar = false;
             GestorBanco.Guardar(x);
             Console.WriteLine("Finalizo el programa.");
+            Environment.Exit(0);
         }
 
         static void Ver(List<Cuenta> cuentas)
@@ -277,29 +332,37 @@ namespace Proyecto_Final
         static void Main(string[] args)
         {
             List<Cuenta> cuentas = new List<Cuenta>();
+            List<Usuario> usuarios = new List<Usuario>();
             GestorBanco.Cargar(cuentas);
+            GestorBanco.CargarUsuarios(usuarios);
 
             while (Iniciar)
             {
                 switch (Menu())
                 {
-                    case 0:
+                    case 4:
                         Info();
                         break;
                     case 1:
-                        Ingreso(cuentas);
+                        if (Sesion(usuarios)){
+                            Opciones(cuentas);
+                        };
                         break;
                     case 2:
-                        Registro(cuentas);
+                        if (Crear(usuarios))
+                        {
+                            Opciones(cuentas);
+                        }
+                        ;
                         break;
                     case 3:
                         Salir(cuentas);
                         break;
                     default:
-                        Console.Clear();
+                        /*Console.Clear();
                         Titulo("UATPay - Error");
                         Console.WriteLine("Opcion no encontrada.\n[ENTER] para continuar...");
-                        Console.ReadKey();
+                        //Console.ReadKey();*/
                         break;
                 }
             }

@@ -22,7 +22,7 @@ namespace Proyecto_Final
             set { this.limite = value; }
         }
 
-        public Credito(int id, string nombre, string apellido, int edad, string fecha, double saldo = 0) : base(id, nombre, apellido, edad, "Credito", saldo, fecha)
+        public Credito(int id, int nr, string nombre, string apellido, int edad, string fecha, double saldo = 0) : base(id, nr, nombre, apellido, edad, "Credito", saldo, fecha)
         {
         }
 

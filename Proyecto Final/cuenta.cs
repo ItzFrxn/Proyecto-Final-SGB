@@ -9,6 +9,7 @@ namespace Proyecto_Final
 {
     public abstract class Cuenta
     {
+        private int id;
         private int numRegistro;
         private string nombres;
         private string apellidos;
@@ -17,6 +18,11 @@ namespace Proyecto_Final
         private double saldo;
         private string tipo;
 
+        public int ID
+        {
+            get { return this.id; }
+            set { this.id = value; }
+        }
         public int Registro
         {
             get { return this.numRegistro; }
@@ -53,18 +59,9 @@ namespace Proyecto_Final
             set { this.tipo = value; }
         }
 
-
-        public Cuenta(string nombre, string apellido, int edad, string tipo, double saldo)
+        public Cuenta(int id, int registro, string nombre, string apellido, int edad, string tipo, double saldo, string fecha)
         {
-            Nombre = nombre;
-            Apellido = apellido;
-            Edad = edad;
-            Tipo = tipo;
-            Saldo = saldo;
-        }
-
-        public Cuenta(int registro, string nombre, string apellido, int edad, string tipo, double saldo, string fecha)
-        {
+            ID = id;
             Registro = registro;
             Nombre = nombre;
             Apellido = apellido;

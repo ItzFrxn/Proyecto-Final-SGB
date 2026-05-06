@@ -142,7 +142,7 @@ namespace Proyecto_Final
             return true;
 
         }
-        static void VerPerfil(List<Usuario> usuarios)
+        static void VerPerfil(List<Usuario> usuarios, List<Cuenta> cuentas)
         {
             int iOpcion;
             do
@@ -159,7 +159,7 @@ namespace Proyecto_Final
                 switch (iOpcion)
                 {
                     case 1: UserMod(usuarios); break;
-                    case 2: UserEliminar(usuarios); return;
+                    case 2: UserEliminar(usuarios, cuentas); return;
                     case 3: break;
                 }
             } while (iOpcion != 3);
@@ -175,13 +175,15 @@ namespace Proyecto_Final
             GestorBanco.GuardarUsuarios(usuarios);
             Console.WriteLine("Datos actualizados.");
         }
-        static void UserEliminar(List<Usuario> usuarios)
+        static void UserEliminar(List<Usuario> usuarios, List<Cuenta> cuentas)
         {
             Console.Clear();
             Titulo("Eliminar Usuario");
             string uConfirmacion = LeerString("Desea eliminar su perfil? (si/no)\n> ").ToLower();
             if (uConfirmacion == "si")
             {
+                cuentas.RemoveAll(c =>  c.ID == uPrincipal.ID);
+                GestorBanco.Guardar(cuentas);
                 usuarios.RemoveAll(u => u.ID == uPrincipal.ID);
                 GestorBanco.GuardarUsuarios(usuarios);
                 Console.WriteLine("Usuario eliminado.\n[ENTER] Para regresar.");
@@ -270,7 +272,7 @@ namespace Proyecto_Final
                 switch (oOpcion)
                 {
                     case 1: VerCuenta(cuentas); break;
-                    case 2: VerPerfil(usuarios); break;
+                    case 2: VerPerfil(usuarios, cuentas); break;
                     case 3: Cerrar(); return;
                     /*case 1: Ver(cuentas); break;
                     case 2: Registro(cuentas); break;

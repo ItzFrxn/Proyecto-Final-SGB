@@ -83,7 +83,7 @@ namespace Proyecto_Final
                 Console.WriteLine("Error: Cantidad inválida.");
                 return;
             }
-            if (cantidad <= Saldo)
+            if (Saldo >= cantidad)
             {
                 Saldo -= cantidad;
             }

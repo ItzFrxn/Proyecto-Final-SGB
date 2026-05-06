@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Final
 {
-    public class Credito : Cuenta
+	public class Credito : Cuenta
     {
         private int numTarjeta;
         private int limite;
@@ -21,9 +21,9 @@ namespace Proyecto_Final
             get { return this.limite; }
             set { this.limite = value; }
         }
-
-        public Credito(int id, int nr, string nombre, string apellido, int edad, string fecha, double saldo = 0) : base(id, nr, nombre, apellido, edad, "Credito", saldo, fecha)
+        public Credito(int id, int nr, string nombre, string apellido, int edad, string fecha, double saldo, int tarjeta ) : base(id, nr, nombre, apellido, edad, "Credito", saldo, fecha)
         {
+            NumTarjeta = tarjeta;
         }
 
         public override void Retirar(double cantidad)
@@ -36,5 +36,5 @@ namespace Proyecto_Final
             Saldo -= cantidad;
             Console.WriteLine($"Has retirado {cantidad} de tu cuenta de crédito. Saldo actual: {Saldo}");
         }
-    }
+	}
 }

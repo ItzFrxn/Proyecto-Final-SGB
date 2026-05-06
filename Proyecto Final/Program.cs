@@ -162,8 +162,6 @@ namespace Proyecto_Final
                     case 2: UserEliminar(usuarios); return;
                     case 3: break;
                 }
-                Console.WriteLine("\n[ENTER] Para regresar.");
-                Console.ReadKey();
             } while (iOpcion != 3);
 		}
         static void UserMod(List<Usuario> usuarios)
@@ -197,10 +195,18 @@ namespace Proyecto_Final
 			Titulo("Cerrar sesión");
 
 			uPrincipal = null;
-			Console.WriteLine("Sesión cerrada correctamente.\n[ENTER] para continuar...");
-			Console.ReadKey();
+			//Console.WriteLine("Sesión cerrada correctamente.\n[ENTER] para continuar...");
+			//Console.ReadKey();
 		}
 		// C U E N T A S
+		static int GenTarjeta()
+		{
+            Random random = new Random();
+			string gPrefijo = "26";
+			int gAleatorio = random.Next(0, 1000);
+			string gNumero = gPrefijo + gAleatorio.ToString("D3");
+			return int.Parse(gNumero);
+		}
 		static void Registro(List<Cuenta> cuentas)
         {
             Console.Clear();
@@ -228,15 +234,16 @@ namespace Proyecto_Final
                     Console.WriteLine("Cuenta Chequera");
                     break;
                 case "credito":
-                    nueva = new Credito(rID, rNR, rNombre, rApellido, rEdad, cFecha);
+                    int rNT = GenTarjeta();
+                    nueva = new Credito(rID, rNR, rNombre, rApellido, rEdad, cFecha, 0, rNT);
                     Console.WriteLine("Cuenta Credito");
                     break;
                 case "inversion":
-                    nueva = new Inversion(rID, rNR, rNombre, rApellido, rEdad, cFecha);
                     Console.WriteLine("Cuenta Inversion");
-                    ((Inversion)nueva).Tasa = LeerDouble("Tasa: ");
-                    ((Inversion)nueva).Periodo = LeerPeriodo("Periodo (diario / semanal / mensaul / anual):");
-                    break;
+                    double rTasa = LeerDouble("Tasa: ");
+                    string rPeriodo = LeerPeriodo("Periodo (diario / semanal / mensaul / anual):");
+					nueva = new Inversion(rID, rNR, rNombre, rApellido, rEdad, cFecha, 0, rTasa, rPeriodo);
+					break;
                 default:
                     Console.WriteLine("Error: Opcion incorrecta.");
                     break;
@@ -368,8 +375,7 @@ namespace Proyecto_Final
 				if (cUser.Count == 0)
 				{
 					Console.WriteLine("No tienes cuentas.");
-					Console.ReadKey();
-					return;
+					//Console.ReadKey();
 				}
 
 				foreach (var c in cUser)

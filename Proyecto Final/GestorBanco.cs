@@ -23,16 +23,24 @@ namespace Proyecto_Final
             {
                 var d = l.Split('|');
 
+                int cID = int.Parse(d[0]);
+                int cNR = int.Parse(d[1]);
+                string cNombre = d[2];
+                string cApellido = d[3];
+                int cEdad = int.Parse(d[4]);
+                string cFecha = d[5];
+                double cSaldo = double.Parse(d[6]);
+                string cTipo = d[7];
                 Cuenta c = null;
 
-                if (d[5] == "Chequera")
-                    c = new Chequera(int.Parse(d[0]), int.Parse(d[1]), d[2], d[3], int.Parse(d[4]), d[5], int.Parse(d[6]));
+                if (cTipo == "Chequera")
+                    c = new Chequera(cID,cNR, cNombre, cApellido, cEdad, cFecha, cSaldo);
 
-                else if (d[5] == "Credito")
-                    c = new Credito(int.Parse(d[0]), int.Parse(d[1]), d[2], d[3], int.Parse(d[4]), d[5], int.Parse(d[6]));
+                else if (cTipo == "Credito")
+                    c = new Credito(cID, cNR, cNombre, cApellido, cEdad, cFecha, cSaldo);
 
-                else if (d[5] == "Inversion")
-                    c = new Inversion(int.Parse(d[0]), int.Parse(d[1]), d[2], d[3], int.Parse(d[4]), d[5], int.Parse(d[6]));
+                else if (cTipo == "Inversion")
+                    c = new Inversion(cID, cNR, cNombre, cApellido, cEdad, cFecha, cSaldo);
 
                 if (c != null)
                 {
